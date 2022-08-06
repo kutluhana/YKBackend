@@ -1,7 +1,6 @@
 package com.example.demo;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,13 +9,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table
-public class Game {
+public class Deck {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +22,7 @@ public class Game {
 	
 	@Column
 	private String name;
-
+	
 	@Column
 	private Date createdAt;
 	
@@ -32,22 +30,22 @@ public class Game {
 	private Date updatedAt;
 	
 	//Game 1(uses)1 Deck
-	@OneToOne
-	@JoinColumn(name="deck_id")
-	private Deck deck;
+	@OneToOne(mappedBy="deck")
+	private Game game;
 	
-	//User 1(creates)n Game
+	//User 1(creates)n Deck
 	@ManyToOne
 	@JoinColumn(name="user_id")
 	private User user;
+	/*
+	//Deck 1(has)n values
+	@OneToMany(mappedBy="deck")
+	private List<DeckValues> deckValues;*/
 	
-	//User n(plays_in)1 Game
-	@OneToMany(mappedBy="game")
-	private List<User> users;
-	
-	//Game 1(has)n Issue
-	@OneToMany(mappedBy="game")
-	private List<Issue> issue;
+	/*//Deck has many values
+	@JoinTable(name = "deck_values", 
+			joinColumns = @JoinColumn(name = "deck_value"))
+	private List<Integer> deckValues;*/
 	
 	public int getId() {
 		return id;
@@ -81,12 +79,12 @@ public class Game {
 		this.updatedAt = updatedAt;
 	}
 
-	public Deck getDeck() {
-		return deck;
+	public Game getGame() {
+		return game;
 	}
 
-	public void setDeck(Deck deck) {
-		this.deck = deck;
+	public void setGame(Game game) {
+		this.game = game;
 	}
 
 	public User getUser() {
@@ -97,21 +95,8 @@ public class Game {
 		this.user = user;
 	}
 
-	public List<User> getUsers() {
-		return users;
-	}
 
-	public void setUsers(List<User> users) {
-		this.users = users;
-	}
+	
 
-	public List<Issue> getIssue() {
-		return issue;
-	}
-
-	public void setIssue(List<Issue> issue) {
-		this.issue = issue;
-	}
-
+	
 }
-

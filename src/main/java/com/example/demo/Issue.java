@@ -9,45 +9,47 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table
-public class Game {
+public class Issue {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	@Column
-	private String name;
 
+	@Column
+	private String description;
+	
+	@Column
+	private boolean isVoted;
+	
+	@Column
+	private int score;
+	
 	@Column
 	private Date createdAt;
 	
 	@Column
 	private Date updatedAt;
 	
-	//Game 1(uses)1 Deck
-	@OneToOne
-	@JoinColumn(name="deck_id")
-	private Deck deck;
-	
-	//User 1(creates)n Game
+	//User 1(creates)n Issue
 	@ManyToOne
 	@JoinColumn(name="user_id")
 	private User user;
 	
-	//User n(plays_in)1 Game
-	@OneToMany(mappedBy="game")
-	private List<User> users;
-	
 	//Game 1(has)n Issue
-	@OneToMany(mappedBy="game")
-	private List<Issue> issue;
+	@ManyToOne
+	@JoinColumn(name="game_id")
+	private Game game;
+	
+	//User n(votes)m Issue
+	@ManyToMany(mappedBy="issuez")
+	private List<User> users;
 	
 	public int getId() {
 		return id;
@@ -57,12 +59,28 @@ public class Game {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public boolean isVoted() {
+		return isVoted;
+	}
+
+	public void setVoted(boolean isVoted) {
+		this.isVoted = isVoted;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
 	}
 
 	public Date getCreatedAt() {
@@ -81,20 +99,20 @@ public class Game {
 		this.updatedAt = updatedAt;
 	}
 
-	public Deck getDeck() {
-		return deck;
-	}
-
-	public void setDeck(Deck deck) {
-		this.deck = deck;
-	}
-
 	public User getUser() {
 		return user;
 	}
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public Game getGame() {
+		return game;
+	}
+
+	public void setGame(Game game) {
+		this.game = game;
 	}
 
 	public List<User> getUsers() {
@@ -105,13 +123,4 @@ public class Game {
 		this.users = users;
 	}
 
-	public List<Issue> getIssue() {
-		return issue;
-	}
-
-	public void setIssue(List<Issue> issue) {
-		this.issue = issue;
-	}
-
 }
-
