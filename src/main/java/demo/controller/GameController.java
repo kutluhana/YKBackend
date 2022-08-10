@@ -2,84 +2,52 @@ package demo.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import demo.entity.Game;
-import demo.entity.Issue;
 import demo.entity.IssueUser;
 import demo.entity.User;
+import demo.response.CreateGameResponse;
 import demo.response.SocketAllResponse;
 import demo.service.GameService;
-import demo.service.IssueService;
 import demo.service.IssueUserService;
 
-
 @RestController
-public class IssueController {
-	
-	@Autowired
-	IssueService issueService;
-	
-	@Autowired
-	SimpMessagingTemplate simpMessagingTemplate;
+public class GameController {
 	
 	@Autowired
 	GameService gameService;
+
+	@Autowired
+	private SimpMessagingTemplate simpMessagingTemplate;
 	
 	@Autowired
 	IssueUserService issueUserService;
 	
-	@PostMapping("/addIssue/{gameId}/{userId}")
-	public  Issue addIssue(@RequestBody Issue issue, @PathVariable int userId, @PathVariable int gameId)
+	@PostMapping("/createGame/{userName}")
+	public CreateGameResponse createGame(@PathVariable String userName)
 	{
-		Issue sendedIssue = issueService.saveIssue(issue);
-		
-		sendMessageToClients(gameId, userId);
-		
-		return sendedIssue;
+		CreateGameResponse rp = gameService.createGame(userName);
+		//sendMessageToClients(rp.getGameId(), rp.getUserId());
+		return rp;
 	}
 	
-	@PostMapping("/addIssues")
-	public  List<Issue> addIssues(@RequestBody List<Issue> issues)
+	@GetMapping("/joinGame/{gameId}/{userName}")
+	public CreateGameResponse joinGame(@PathVariable int gameId, @PathVariable String userName)
 	{
-		return issueService.saveIssues(issues);
+		var rp = gameService.joinGame(gameId, userName);
+		sendMessageToClients(rp.getGameId(), rp.getUserId());
+		return rp;
 	}
 	
-	@GetMapping("/issues")
-	public List<Issue> findAllIssues()
-	{
-		return issueService.getIssues();
-	}
-	
-	
-	@GetMapping("/issue/{id}")
-	public Issue findIssueById(@PathVariable int id)
-	{
-		return issueService.findIssueById(id);
-	}
-	
-	@PutMapping("updateIssue")
-	public Issue updateIssue(@RequestBody Issue issue)
-	{
-		return issueService.updateIssue(issue);
-	}
-	
-	@DeleteMapping("/deleteIssue/{id}")
-	public String deleteIssue(@PathVariable int id)
-	{
-		return issueService.deleteIssue(id);
-	}
-	
-	public void sendMessageToClients( int gameId, int userId)
+	public void sendMessageToClients(int gameId, int userId)
 	{
 		Game game = gameService.getGame(gameId);
 		
@@ -109,5 +77,4 @@ public class IssueController {
 		sar.setIssuePoints(issueUsers);
 		return sar;
 	}
-	
 }

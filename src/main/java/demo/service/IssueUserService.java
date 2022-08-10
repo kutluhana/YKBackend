@@ -112,3 +112,4 @@ public class IssueUserService {
 		issueService.saveIssue(gettedIssue);
 	}
 }
+
