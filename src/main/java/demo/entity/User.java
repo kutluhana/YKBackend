@@ -30,4 +30,17 @@ public class User {
 	 {
 		 return id;
 	 }
+	 
+	 @Override
+	 public boolean equals(Object obj)
+	 {
+		 if(this.getClass() != obj.getClass())
+			 return false;
+		 
+		 if(obj == null)
+			 return false;
+		 
+		 User other = (User) obj;
+		 return this.getId() == other.getId();
+	 }
 }

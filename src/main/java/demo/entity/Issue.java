@@ -14,11 +14,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.Data;
 
 @Entity
 @Table(name="issue")
 @Data
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class Issue {
 
 	@Id
@@ -39,6 +43,7 @@ public class Issue {
 	
 	@ManyToOne
 	@JoinColumn(name="owner_id", nullable=false)
+	@JsonManagedReference
 	private Game ownerGame;
 	
 	 @Override
@@ -46,4 +51,6 @@ public class Issue {
 	 {
 		 return id;
 	 }
+	 
+
 }
