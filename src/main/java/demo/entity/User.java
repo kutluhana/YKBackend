@@ -8,11 +8,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.Data;
 
 @Entity
 @Table(name="user")
 @Data
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class User {
 	
 	@Id
@@ -23,6 +27,7 @@ public class User {
 	 
 	 @ManyToOne
 	 @JoinColumn(name="game_id", nullable=false)
+	 @JsonManagedReference
 	 private Game inGame;
 	 
 	 @Override

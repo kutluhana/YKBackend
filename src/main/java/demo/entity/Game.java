@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
 
@@ -30,6 +31,7 @@ public class Game {
 		
 		@OneToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
 		@JoinColumn(name = "selected_issue_id", referencedColumnName="id")
+		@JsonManagedReference
 		private Issue selectedIssue;
 		
 		private String gameStatus;
@@ -41,7 +43,7 @@ public class Game {
 		private Set<Issue> issuesInGame;
 		
 		@OneToMany(fetch = FetchType.LAZY,mappedBy="inGame")
-		 @JsonBackReference
+		@JsonBackReference
 		private Set<User> users;
 		
 		 @Override
@@ -50,11 +52,4 @@ public class Game {
 			 return id;
 		 }
 		 
-		    @Override
-		    public String toString() {
-		        return "MessageModel{" +
-		                "message='" + this.getId() + '\'' +
-		                ", fromLogin='" + this.getId() + '\'' +
-		                '}';
-		    }
 }
