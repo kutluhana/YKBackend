@@ -38,11 +38,10 @@ public class GameController {
 	@Autowired
 	UserService userService;
 	
-	@PostMapping("/createGame/{userName}")
-	public CreateGameResponse createGame(@PathVariable String userName)
+	@PostMapping("/createGame/{userName}/{gameName}")
+	public CreateGameResponse createGame(@PathVariable String userName, @PathVariable String gameName)
 	{
-		CreateGameResponse rp = gameService.createGame(userName);
-		//sendMessageToClients(rp.getGameId(), rp.getUserId());
+		CreateGameResponse rp = gameService.createGame(userName, gameName);
 		return rp;
 	}
 	
@@ -51,63 +50,21 @@ public class GameController {
 	public CreateGameResponse joinGame(@PathVariable int gameId, @PathVariable String userName)
 	{
 		var rp = gameService.joinGame(gameId, userName);
-		sendMessageToClients(rp.getGameId());
+	    gameService.sendRequests(gameId);
 		return rp;
 	}
 	
-	@GetMapping("callData/{gameId}")
+	@GetMapping("/callData/{gameId}")
 	public void callData(@PathVariable int gameId)
 	{
-		var sar = new SocketAllResponse();
-		sar.setGame(gameService.getGame(gameId));
-		sar.setUsers(new ArrayList<>(sar.getGame().getUsers()));
-		sar.setIssues(new ArrayList<>(sar.getGame().getIssuesInGame()));
-		List<IssueUser> issueUsers = new ArrayList<>();
-		
-		List<IssueUser> allIssuePoints = issueUserService.getIssueUsers();
-		
-		for(IssueUser check : allIssuePoints)
-		{
-			if(check.getUser().getInGame().getId() == gameId)
-				issueUsers.add(check);
-		}
-		
-		sar.setIssuePoints(allIssuePoints);
-		ResponseEntity re = new ResponseEntity();
-		re.setGameId(gameId);
-		re.setState("CREATED");
-		
-		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId, sar);
-		//sendMessageToClients(gameId);
+		gameService.sendRequests(gameId);
 	}
 	
-	public void sendMessageToClients(int gameId)
+	@GetMapping("/revealCards/{gameId}")
+	public void revealCards(@PathVariable int gameId)
 	{
-		Game game = gameService.getGame(gameId);
+		gameService.revealCards(gameId);
 		
-		//List<User> x = new ArrayList<>(game.getUsers());
-		SocketAllResponse sar = sarFunc(gameId);
-		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId, "123");
-	}
-	
-	SocketAllResponse sarFunc(int gameId)
-	{
-		var sar = new SocketAllResponse();
-		sar.setGame(gameService.getGame(gameId));
-		sar.setUsers(new ArrayList<>(sar.getGame().getUsers()));
-		sar.setIssues(new ArrayList<>(sar.getGame().getIssuesInGame()));
-		
-		List<IssueUser> issueUsers = new ArrayList<>();
-		
-		List<IssueUser> allIssuePoints = issueUserService.getIssueUsers();
-		
-		for(IssueUser check : allIssuePoints)
-		{
-			if(check.getUser().getInGame().getId() == gameId)
-				issueUsers.add(check);
-		}
-		
-		sar.setIssuePoints(issueUsers);
-		return sar;
+		gameService.sendRequests(gameId);
 	}
 }

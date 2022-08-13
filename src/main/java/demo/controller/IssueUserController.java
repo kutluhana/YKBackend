@@ -37,9 +37,9 @@ public class IssueUserController {
 		return issueUserService.getAllCards(issueId);
 	}
 	
-	@PostMapping("/revealCards/{issueId}")
+	/*@PostMapping("/revealCards/{issueId}")
 	public void revealCards(@PathVariable int issueId)
 	{
 		issueUserService.revealCards(issueId);
-	}
+	}*/
 }

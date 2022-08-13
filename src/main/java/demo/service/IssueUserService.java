@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import demo.entity.Issue;
 import demo.entity.IssueUser;
+import demo.repo.IssueRepo;
 import demo.repo.IssueUserRepo;
 import demo.response.IssueUserResponse;
 
@@ -21,7 +22,7 @@ public class IssueUserService {
 	UserService userService;
 	
 	@Autowired
-	IssueService issueService;
+	IssueRepo issueRepo;
 	
 	public IssueUser saveIssueUser(int issueId, int userId, int point)
 	{
@@ -38,7 +39,7 @@ public class IssueUserService {
 		
 		IssueUser issue = new IssueUser();
 		
-		issue.setIssue(issueService.findIssueById(issueId));
+		issue.setIssue(issueRepo.findById(issueId).orElse(null));
 		issue.setPoint(point);
 		issue.setUser(userService.findUserById(userId));
 		
@@ -75,7 +76,7 @@ public class IssueUserService {
 	
 	public List<IssueUserResponse> getAllCards(int issueId)
 	{
-		Issue gettedIssue = issueService.findIssueById(issueId);
+		Issue gettedIssue = issueRepo.findById(issueId).orElse(null);
 		if(gettedIssue == null || gettedIssue.getIsRevealed() == false)
 			return null;
 		
@@ -95,7 +96,7 @@ public class IssueUserService {
 		return responses;
 	}
 	
-	public void revealCards(int issueId)
+	/*public void revealCards(int issueId)
 	{
 		Issue gettedIssue = issueService.findIssueById(issueId);
 		gettedIssue.setIsRevealed(true);
@@ -110,6 +111,6 @@ public class IssueUserService {
 		point = (issues.size() <= 0) ? 0 : point / issues.size();
 		gettedIssue.setStoryPoint(point);
 		issueService.saveIssue(gettedIssue);
-	}
+	}*/
 }
 

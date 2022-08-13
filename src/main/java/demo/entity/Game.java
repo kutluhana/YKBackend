@@ -34,6 +34,8 @@ public class Game {
 		
 		private String gameStatus;
 		
+		private String gameName;
+		
 		@OneToMany(fetch = FetchType.LAZY,mappedBy="ownerGame")
 		@JsonBackReference
 		private Set<Issue> issuesInGame;

@@ -5,8 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import demo.entity.Game;
 import demo.entity.Issue;
+import demo.entity.IssueUser;
+import demo.repo.GameRepo;
 import demo.repo.IssueRepo;
+import demo.repo.IssueUserRepo;
 
 @Service
 public class IssueService {
@@ -14,7 +18,14 @@ public class IssueService {
 	@Autowired
 	IssueRepo issueRepo;
 	
-
+	@Autowired
+	GameService gameService;
+	
+	@Autowired
+	GameRepo gameRepo;
+	
+	@Autowired
+	IssueUserRepo issueUserRepo;
 	
 	public Issue saveIssue(Issue issue)
 	{
@@ -48,5 +59,24 @@ public class IssueService {
 		existingIssue.setIssueName(issue.getIssueName());
 		existingIssue.setDescription(issue.getDescription());
 		return issueRepo.save(existingIssue);
+	}
+	
+	public void selectIssue(int gameId, int issueId)
+	{
+		Issue issueToSelected = findIssueById(issueId);
+		
+		Game game = gameService.getGame(gameId);
+		
+		game.setSelectedIssue(issueToSelected);
+		game.setGameStatus("VOTING");
+		
+		List<IssueUser> issueUsers = issueUserRepo.findByIssueId(issueId);
+		
+		for(IssueUser issueUser : issueUsers)
+		{
+			issueUserRepo.deleteById(issueUser.getId());
+		}
+		
+		gameRepo.save(game);
 	}
 }

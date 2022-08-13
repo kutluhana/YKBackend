@@ -18,6 +18,7 @@ import demo.entity.Game;
 import demo.entity.Issue;
 import demo.entity.IssueUser;
 import demo.entity.User;
+import demo.request.IssueRequest;
 import demo.response.SocketAllResponse;
 import demo.service.GameService;
 import demo.service.IssueService;
@@ -41,11 +42,19 @@ public class IssueController {
 	IssueUserService issueUserService;
 	
 	@PostMapping("/addIssue/{gameId}/{userId}")
-	public  Issue addIssue(@RequestBody Issue issue, @PathVariable int userId, @PathVariable int gameId)
+	public  Issue addIssue(@RequestBody IssueRequest issueRequest, @PathVariable int userId, @PathVariable int gameId)
 	{
-		Issue sendedIssue = issueService.saveIssue(issue);
+		Issue newIssue = new Issue();
+		Game game = gameService.getGame(gameId);
 		
-		sendMessageToClients(gameId, userId);
+		newIssue.setDescription(issueRequest.getDescription());
+		newIssue.setIsRevealed(false);
+		newIssue.setIssueName(issueRequest.getIssueName());
+		newIssue.setOwnerGame(game);
+		
+		Issue sendedIssue = issueService.saveIssue(newIssue);
+		
+		gameService.sendRequests(gameId);
 		
 		return sendedIssue;
 	}
@@ -81,35 +90,11 @@ public class IssueController {
 		return issueService.deleteIssue(id);
 	}
 	
-	public void sendMessageToClients( int gameId, int userId)
+	@GetMapping("/selectIssue/{gameId}/{issueId}")
+	public void selectIssue(@PathVariable int gameId, @PathVariable int issueId)
 	{
-		Game game = gameService.getGame(gameId);
+		issueService.selectIssue(gameId, issueId);
 		
-		List<User> x = new ArrayList<>(game.getUsers());
-		SocketAllResponse sar = sarFunc(gameId, userId);
-		for(User send : x)
-			simpMessagingTemplate.convertAndSend("/topic/" + gameId +"/" +  send.getId(), sar);
+		gameService.sendRequests(gameId);
 	}
-	
-	SocketAllResponse sarFunc(int gameId, int userId)
-	{
-		var sar = new SocketAllResponse();
-		sar.setGame(gameService.getGame(gameId));
-		sar.setUsers(new ArrayList<>(sar.getGame().getUsers()));
-		sar.setIssues(new ArrayList<>(sar.getGame().getIssuesInGame()));
-		
-		List<IssueUser> issueUsers = new ArrayList<>();
-		
-		List<IssueUser> allIssuePoints = issueUserService.getIssueUsers();
-		
-		for(IssueUser check : allIssuePoints)
-		{
-			if(check.getUser().getInGame().getId() == gameId)
-				issueUsers.add(check);
-		}
-		
-		sar.setIssuePoints(issueUsers);
-		return sar;
-	}
-	
 }
