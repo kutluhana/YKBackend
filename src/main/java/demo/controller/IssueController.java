@@ -72,6 +72,13 @@ public class IssueController {
 		return issueService.getIssues();
 	}
 	
+	@GetMapping("/issues/{gameId}")
+	public List<Issue> findIssuesByGameId(@PathVariable int gameId)
+	{
+		Game game = gameService.getGame(gameId);
+		return new ArrayList<>(game.getIssuesInGame());
+	}
+	
 	
 	@GetMapping("/issue/{id}")
 	public Issue findIssueById(@PathVariable int id)
