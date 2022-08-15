@@ -98,4 +98,14 @@ public class IssueController {
 		
 		gameService.sendRequests(gameId);
 	}
+	
+	@GetMapping("/appendPointIssue/{gameId}/{issueId}/{point}")
+	public Issue appendPointIssue(@PathVariable int gameId, @PathVariable int issueId, @PathVariable int point)
+	{
+		Issue is = issueService.appendPoint(issueId, point);
+		
+		gameService.sendRequests(gameId);
+		
+		return is;
+	}
 }

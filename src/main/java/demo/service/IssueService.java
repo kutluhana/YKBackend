@@ -79,4 +79,12 @@ public class IssueService {
 		
 		gameRepo.save(game);
 	}
+	
+	public Issue appendPoint(int issueId, int point)
+	{
+		Issue issue = findIssueById(issueId);
+		issue.setStoryPoint((double)point);
+		
+		return issueRepo.save(issue);
+	}
 }
