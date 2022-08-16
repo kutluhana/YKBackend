@@ -16,6 +16,16 @@ private Game game;
 	
 	private  List<IssueUser> issuePoints;
 	
+	private List<UserVoteInfo> userVotes;
+	
+	public List<UserVoteInfo> getUserVotes() {
+		return userVotes;
+	}
+
+	public void setUserVotes(List<UserVoteInfo> userVotes) {
+		this.userVotes = userVotes;
+	}
+
 	public Game getGame() {
 		return game;
 	}

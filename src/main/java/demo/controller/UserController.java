@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import demo.entity.User;
+import demo.service.GameService;
 import demo.service.UserService;
 
 
@@ -24,6 +25,9 @@ public class UserController {
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	GameService gameService;
 	
 	@PostMapping("/addUser")
 	public  User addUser(@RequestBody User user)
@@ -53,6 +57,16 @@ public class UserController {
 	public User updateIssue(@RequestBody User user)
 	{
 		return userService.updateUser(user);
+	}
+	
+	@PutMapping("/changeUserName/{gameId}/{userId}/{userName}")
+	public User updateUserName(@PathVariable int gameId, @PathVariable int userId, @PathVariable String userName)
+	{
+		User retUser = userService.updateUserName(userId, userName);
+		
+		gameService.sendRequests(gameId);
+		
+		return retUser;
 	}
 	
 	@DeleteMapping("/deleteUser/{id}")

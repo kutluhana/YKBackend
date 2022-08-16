@@ -1,7 +1,9 @@
 package demo.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -15,6 +17,7 @@ import demo.repo.GameRepo;
 import demo.repo.IssueRepo;
 import demo.response.CreateGameResponse;
 import demo.response.SocketAllResponse;
+import demo.response.UserVoteInfo;
 
 @Service
 public class GameService {
@@ -80,14 +83,38 @@ public class GameService {
 		List<IssueUser> issueUsers = new ArrayList<>();
 		
 		List<IssueUser> allIssuePoints = issueUserService.getIssueUsers();
-		
+		Set<Integer> setUser = new HashSet<>();
 		for(IssueUser check : allIssuePoints)
 		{
-			if(check.getUser().getInGame().getId() == gameId)
+			if(sar.getGame().getSelectedIssue() != null  &&  check.getUser().getInGame().getId() == gameId && check.getIssue().getId() == sar.getGame().getSelectedIssue().getId())
+			{
 				issueUsers.add(check);
+				setUser.add(check.getUser().getId());
+			}
 		}
 		
-		sar.setIssuePoints(allIssuePoints);
+		sar.setIssuePoints(issueUsers);
+		
+		if(sar.getGame().getGameStatus() == "VOTING")
+		{
+			List<UserVoteInfo> userVotes = new ArrayList<>();
+			
+			List<User> inGameUsers = sar.getUsers();
+			
+			for(User user: inGameUsers)
+			{
+				UserVoteInfo userVote = new UserVoteInfo();
+				userVote.setUserId(user.getId());
+				userVote.setUserName(user.getName());
+				if(setUser.contains(user.getId()))
+					userVote.setVote(true);
+				else
+					userVote.setVote(false);
+				userVotes.add(userVote);
+			}
+			
+			sar.setUserVotes(userVotes);
+		}
 		
 		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId, sar);
 	}
@@ -109,8 +136,10 @@ public class GameService {
 				count++;
 			}
 		}
-		
-		selectedIssue.setStoryPoint(res / count);
+		if(count != 0)
+			selectedIssue.setStoryPoint(res / count);
+		else
+			selectedIssue.setStoryPoint(0.0);
 		selectedIssue.setIsRevealed(true);
 		issueRepo.save(selectedIssue);
 		
@@ -140,5 +169,15 @@ public class GameService {
 		simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameId, sar);
 	}
 	
+	public Game changeGameName(int gameId, String newGameName)
+	{
+		Game game = gameRepo.findById(gameId).orElse(null);
+		
+		if(game == null)
+			return null;
+		
+		game.setGameName(newGameName);
+		return gameRepo.save(game);
+	}
 	
 }

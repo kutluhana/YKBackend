@@ -51,4 +51,13 @@ public class UserService {
 		existingUser.setName(user.getName());
 		return userRepo.save(existingUser);
 	}
+	
+	public User updateUserName(int userId, String newUserName)
+	{
+		User user = userRepo.findById(userId).orElse(null);
+		
+		user.setName(newUserName);
+		
+		return userRepo.save(user);
+	}
 }
