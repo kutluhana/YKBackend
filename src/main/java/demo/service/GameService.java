@@ -103,7 +103,7 @@ public class GameService {
 		
 		sar.setIssuePoints(issueUsers);
 		
-		if(sar.getGame().getGameStatus() == "VOTING")
+		if(sar.getGame().getGameStatus().equals("VOTING"))
 		{
 			List<UserVoteInfo> userVotes = new ArrayList<>();
 			
