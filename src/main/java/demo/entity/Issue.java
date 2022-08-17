@@ -37,7 +37,7 @@ public class Issue {
 
 	private String description;
 	
-	private Double storyPoint;
+	private int storyPoint;
 	
 	private Boolean isRevealed;
 	

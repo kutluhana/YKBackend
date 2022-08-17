@@ -1,6 +1,7 @@
 package demo.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -144,10 +145,30 @@ public class GameService {
 				count++;
 			}
 		}
+		
+		
+		
 		if(count != 0)
-			selectedIssue.setStoryPoint(res / count);
+		{
+			int storyTempPoint = (int)(res / count);
+			Set<Integer> fibonacciNumbers = new HashSet<>(Arrays.asList(new Integer[]{0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89}));
+			int diff = Integer.MAX_VALUE;
+			
+			for(int currentFib : fibonacciNumbers)
+			{
+				diff = Math.min(diff, Math.abs(storyTempPoint- currentFib));
+			}
+			
+			if(fibonacciNumbers.contains(storyTempPoint + diff))
+			{
+				selectedIssue.setStoryPoint(storyTempPoint + diff); 
+			}else
+			{
+				selectedIssue.setStoryPoint(storyTempPoint - diff);
+			}
+		}
 		else
-			selectedIssue.setStoryPoint(0.0);
+			selectedIssue.setStoryPoint(0);
 		selectedIssue.setIsRevealed(true);
 		issueRepo.save(selectedIssue);
 		

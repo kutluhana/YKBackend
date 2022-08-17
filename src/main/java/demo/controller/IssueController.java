@@ -51,7 +51,7 @@ public class IssueController {
 		newIssue.setIsRevealed(false);
 		newIssue.setIssueName(issueRequest.getIssueName());
 		newIssue.setOwnerGame(game);
-		newIssue.setStoryPoint(0.0);
+		newIssue.setStoryPoint(0);
 		
 		Issue sendedIssue = issueService.saveIssue(newIssue);
 		

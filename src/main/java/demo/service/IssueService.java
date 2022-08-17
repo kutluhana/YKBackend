@@ -83,7 +83,7 @@ public class IssueService {
 	public Issue appendPoint(int issueId, int point)
 	{
 		Issue issue = findIssueById(issueId);
-		issue.setStoryPoint((double)point);
+		issue.setStoryPoint(point);
 		
 		return issueRepo.save(issue);
 	}
