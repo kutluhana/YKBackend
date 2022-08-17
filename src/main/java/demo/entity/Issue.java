@@ -1,5 +1,6 @@
 package demo.entity;
 
+import java.util.Comparator;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -55,6 +56,8 @@ public class Issue {
 	 {
 		 return id;
 	 }
+
+
 	 
 
 }

@@ -1,6 +1,8 @@
 package demo.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -80,6 +82,12 @@ public class GameService {
 		sar.setGame(getGame(gameId));
 		sar.setUsers(new ArrayList<>(sar.getGame().getUsers()));
 		sar.setIssues(new ArrayList<>(sar.getGame().getIssuesInGame()));
+		Collections.sort(sar.getIssues(), new Comparator<Issue>() {
+			@Override
+			public int compare(Issue o1, Issue o2) {
+				return (o1.getId() < (o2.getId())) ? -1 : (o1.getId() > o2.getId()) ? 1 : 0;
+			}
+		});
 		List<IssueUser> issueUsers = new ArrayList<>();
 		
 		List<IssueUser> allIssuePoints = issueUserService.getIssueUsers();
