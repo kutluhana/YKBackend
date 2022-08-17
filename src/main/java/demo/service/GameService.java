@@ -150,21 +150,21 @@ public class GameService {
 		
 		if(count != 0)
 		{
-			int storyTempPoint = (int)(res / count);
-			Set<Integer> fibonacciNumbers = new HashSet<>(Arrays.asList(new Integer[]{0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89}));
-			int diff = Integer.MAX_VALUE;
+			double storyTempPoint = (res / count);
+			Set<Double> fibonacciNumbers = new HashSet<>(Arrays.asList(new Double[]{0.0, 1.0, 2.0, 3.0, 5.0, 8.0, 13.0, 21.0, 34.0, 55.0, 89.0}));
+			double diff = Integer.MAX_VALUE;
 			
-			for(int currentFib : fibonacciNumbers)
+			for(double currentFib : fibonacciNumbers)
 			{
 				diff = Math.min(diff, Math.abs(storyTempPoint- currentFib));
 			}
 			
 			if(fibonacciNumbers.contains(storyTempPoint + diff))
 			{
-				selectedIssue.setStoryPoint(storyTempPoint + diff); 
+				selectedIssue.setStoryPoint((int)(storyTempPoint + diff)); 
 			}else
 			{
-				selectedIssue.setStoryPoint(storyTempPoint - diff);
+				selectedIssue.setStoryPoint((int)(storyTempPoint - diff));
 			}
 		}
 		else
